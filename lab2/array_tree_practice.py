@@ -19,8 +19,7 @@ def left_child_0(i: int) -> int:
     Given index i of a node in a 0-indexed complete binary tree,
     return the index of its left child.
     """
-    # TODO: Implement the 0-based left child index formula.
-    raise NotImplementedError("TODO: Implement left_child_0")
+    return 2 * i + 1
 
 
 def right_child_0(i: int) -> int:
@@ -28,8 +27,7 @@ def right_child_0(i: int) -> int:
     Given index i of a node in a 0-indexed complete binary tree,
     return the index of its right child.
     """
-    # TODO: Implement the 0-based right child index formula.
-    raise NotImplementedError("TODO: Implement right_child_0")
+    return 2 * i + 2
 
 
 def parent_0(i: int) -> Optional[int]:
@@ -37,8 +35,9 @@ def parent_0(i: int) -> Optional[int]:
     Given index i of a node in a 0-indexed complete binary tree,
     return the index of its parent, or None if i is the root (i == 0).
     """
-    # TODO: Implement the 0-based parent index formula.
-    raise NotImplementedError("TODO: Implement parent_0")
+    if i == 0:
+        return None
+    return (i - 1) // 2
 
 
 # =====================================================================
@@ -50,8 +49,7 @@ def left_child_1(i: int) -> int:
     Given index i of a node in a 1-indexed binary tree (root at index 1),
     return the index of its left child.
     """
-    # TODO: Implement the 1-based left child index formula.
-    raise NotImplementedError("TODO: Implement left_child_1")
+    return 2 * i
 
 
 def right_child_1(i: int) -> int:
@@ -59,8 +57,7 @@ def right_child_1(i: int) -> int:
     Given index i of a node in a 1-indexed binary tree (root at index 1),
     return the index of its right child.
     """
-    # TODO: Implement the 1-based right child index formula.
-    raise NotImplementedError("TODO: Implement right_child_1")
+    return 2 * i + 1
 
 
 def parent_1(i: int) -> Optional[int]:
@@ -68,8 +65,9 @@ def parent_1(i: int) -> Optional[int]:
     Given index i of a node in a 1-indexed binary tree (root at index 1),
     return the index of its parent, or None if i is the root (i <= 1).
     """
-    # TODO: Implement the 1-based parent index formula.
-    raise NotImplementedError("TODO: Implement parent_1")
+    if i <= 1:
+        return None
+    return i // 2
 
 
 # =====================================================================
@@ -80,16 +78,14 @@ def has_left_0(i: int, n: int) -> bool:
     """
     Returns True if node at index i has a left child in a complete tree of size n.
     """
-    # TODO: Return whether the left child index is strictly less than n.
-    raise NotImplementedError("TODO: Implement has_left_0")
+    return left_child_0(i) < n
 
 
 def has_right_0(i: int, n: int) -> bool:
     """
     Returns True if node at index i has a right child in a complete tree of size n.
     """
-    # TODO: Return whether the right child index is strictly less than n.
-    raise NotImplementedError("TODO: Implement has_right_0")
+    return right_child_0(i) < n
 
 
 def is_leaf_0(i: int, n: int) -> bool:
@@ -97,8 +93,8 @@ def is_leaf_0(i: int, n: int) -> bool:
     Returns True if node at index i is a leaf in a complete binary tree of size n.
     Hint: In a complete binary tree, if a node has no left child, can it have a right child?
     """
-    # TODO: Determine if node i is a leaf.
-    raise NotImplementedError("TODO: Implement is_leaf_0")
+    # In a complete tree, no left child means no right child either.
+    return not has_left_0(i, n)
 
 
 # =====================================================================
@@ -114,8 +110,10 @@ def is_valid_max_heap(arr: List[int]) -> bool:
     For every index i > 0, arr[parent(i)] >= arr[i].
     Equivalently, every parent must be greater than or equal to both of its children.
     """
-    # TODO: Iterate through the tree and verify the Max-Heap property.
-    raise NotImplementedError("TODO: Implement is_valid_max_heap")
+    for i in range(1, len(arr)):
+        if arr[parent_0(i)] < arr[i]:
+            return False
+    return True
 
 
 # =====================================================================
@@ -127,9 +125,12 @@ def inorder_from_array(arr: List[Any], index: int = 0) -> List[Any]:
     Given a 0-indexed array representing a complete binary tree,
     return a list containing the elements in IN-ORDER traversal (Left -> Root -> Right).
     """
-    # TODO: Recursively collect the elements in in-order.
-    # Base case: if index is out of bounds or arr[index] is None, return []
-    raise NotImplementedError("TODO: Implement inorder_from_array")
+    # Base case: out of bounds or an empty slot
+    if index >= len(arr) or arr[index] is None:
+        return []
+    left = inorder_from_array(arr, left_child_0(index))
+    right = inorder_from_array(arr, right_child_0(index))
+    return left + [arr[index]] + right
 
 
 # =====================================================================
