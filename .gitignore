@@ -5,5 +5,6 @@ _site/
 .jekyll-cache/
 .sass-cache/
 vendor/
-
 .vscode/
+schedule.md
+
