@@ -120,117 +120,122 @@ have a different height, creating imbalances higher up.
 
 ## Part 2: AVL Deletion Traces
 
-### Example: AVL tree from Lab 4 insertions
+### Example: AVL trees for deletion traces
 
-Recall the AVL tree built by inserting `[30, 10, 20]` iteratively (from Lab 4, Part 4.2).
-After all insertions, the tree is:
-
-```
-      20
-     /  \
-   10    30
-```
-
-All nodes are balanced: 20 has BF=0, 10 has BF=0, 30 has BF=0.
+For the traces below, we use AVL trees built carefully so that deletions trigger imbalances.
 
 ### 2.1 Trace: Single rotation after deletion
 
-**TODO 2.1:** Delete key `10` from the tree above. Trace the rebalancing:
+Start with this AVL tree:
+```
+      30
+     /  \
+   20    40
+   /
+  10
+```
+(All nodes balanced: 30 has BF=1, 20 has BF=1, others BF=0.)
 
-1. Perform BST deletion of 10 (it's a leaf). What is the tree after deletion?
-2. Rebalance from the parent of the deleted node (20).
-3. What is the balance factor at 20?
+**TODO 2.1:** Delete key `40` from this tree. Trace the rebalancing:
+
+1. Perform BST deletion of 40 (it's a leaf). What is the tree after deletion?
+2. Rebalance from the parent of the deleted node (30).
+3. What is the balance factor at 30?
 4. Identify the violation signature (LL, RR, LR, or RL) and the required rotation.
 5. After rotation, is the tree still imbalanced? If so, continue rebalancing.
 6. Draw the final tree and record the in-order traversal.
 
 | Step | Action | Tree state | Unbalanced node | BF | Signature | Rotation | Notes |
 |---|---|---|---|---|---|---|---|
-| 1 | Delete 10 | 20 root, 30 right child | - | - | - | - | Leaf deletion |
-| 2 | Rebalance from 20 | 20 root, 30 right child | None | -1 at 20 | None | None | Already balanced |
-| 3 | After rotation | 20 root, 30 right child; no rotation needed | None | -1 at 20, 0 at 30 | - | - | Final state |
+| 1 | Delete 40 | 40 is removed (leaf) | - | - | - | - | Tree now has 30 root, 20 left, nothing right |
+| 2 | Rebalance from 30 | 30 root, 20 left child, 10 left child of 20 | 30 | +2 | LL | Right at 30 | 20 becomes the root |
+| 3 | After rotation | 20 root, 10 left child, 30 right child | None | 0 at every node | - | - | Final state |
 
-After deleting 10, BF(20) = -1 - 0 = -1, which is still allowed. There is no violation or rotation, and 20 has no parent to check.
+After deleting 40, BF(30) = 1 - (-1) = 2. Its left child 20 has BF=1, so this is an LL case. Rotate right at 30. All nodes are then balanced, and the new root 20 has no parent to check.
 
 ```text
-20
-  \
-   30
+    20
+   /  \
+  10   30
 ```
 
-In-order traversal: `[20, 30]`.
+In-order traversal: `[10, 20, 30]`.
 
 ### 2.2 Trace: Double rotation after deletion
 
-Build a new AVL tree by inserting `[20, 10, 30, 5, 15, 25, 35]` in balanced order.
-
-The tree should look like:
+Start with this AVL tree:
 ```
-        20
-       /  \
-      10   30
-     / \   / \
-    5  15 25 35
+      30
+     /  \
+   10    40
+    \
+    20
 ```
+(All nodes balanced: 30 has BF=0, 10 has BF=-1, others BF=0.)
 
-All nodes are balanced (you can verify balance factors are in {-1, 0, 1}).
+**TODO 2.2:** Delete key `40` from this tree. Trace the rebalancing:
 
-**TODO 2.2:** Delete key `5` from this tree. Trace the rebalancing:
-
-1. Perform BST deletion of 5 (it's a leaf).
-2. Rebalance from the parent of the deleted node (10).
-3. What is the balance factor at 10 after 5 is deleted?
-4. Identify the violation and required rotation(s).
-5. After the first rotation, is the tree still imbalanced at 20? Continue if needed.
+1. Perform BST deletion of 40 (it's a leaf).
+2. Rebalance from the parent of the deleted node (30).
+3. What is the balance factor at 30 after 40 is deleted?
+4. Identify the violation signature. Is node 10 left-heavy or right-heavy?
+5. Which rotation(s) are needed (single or double)?
 6. Draw the final tree and record the in-order traversal.
 
 | Step | Action | Current node | BF before | Signature | Rotation applied | BF after |
 |---|---|---|---|---|---|---|
-| 1 | Delete 5 | 10 | -1 | None | None | -1 |
-| 2 | Rebalance parent | 20 | 0 | None | None | 0 |
-| 3 | Continue up | (if needed) | N/A | None | None; reached root | N/A |
+| 1 | Delete 40 | 30 | +2 | LR | Left at 10, then right at 30 | 0 |
+| 2 | Verify final | - | - | - | - | - |
 
-The BF values in the table are after deletion, before and after checking each node. BF(10) = -1 - 0 = -1, and its height stays 1. BF(20) = 1 - 1 = 0. No single or double rotation is needed.
+After deleting 40, BF(30) = 1 - (-1) = 2. Node 10 is right-heavy: BF(10) = -1 - 0 = -1. This is an LR case, so rotate left at 10, then right at 30. The table's BF before is after deletion but before these rotations. The final root is 20, and every node has BF=0.
 
 ```text
-        20
-       /  \
-      10   30
-       \   / \
-       15 25 35
+    20
+   /  \
+  10   30
 ```
 
-In-order traversal: `[10, 15, 20, 25, 30, 35]`.
+In-order traversal: `[10, 20, 30]`.
 
-### 2.3 Trace: Multiple rebalancing passes
+### 2.3 Trace: Two-child deletion with rebalancing
 
-Insert the keys `[40, 20, 60, 10, 30, 50, 70]` to build a complete balanced BST.
+Start with this AVL tree:
+```
+        50
+       /  \
+      30   70
+     / \     \
+   20  40    80
+   /
+  10
+```
+(All balanced initially.)
 
-**TODO 2.3:** Delete key `20`. This is a 2-child deletion (has both 10 and 30 as children).
+**TODO 2.3:** Delete key `30`. This is a 2-child deletion (has both 20 and 40 as children).
 Trace the rebalancing:
 
-1. Find the in-order successor of 20 (minimum of right subtree: 30).
-2. Perform the transplant: replace 20 with 30.
-3. Rebalance from the parent of the deleted node onward.
+1. Find the in-order successor of 30 (minimum of right subtree: 40).
+2. Perform the transplant: replace 30 with 40, move 40's children appropriately.
+3. Rebalance from the appropriate starting node (the parent of where 40 was removed).
 4. At each step, identify any violation and apply the necessary rotation.
 5. Continue until no more imbalances exist.
 
-| Step | Current node | BF | Imbalanced? | Rotation | After rotation |
+| Step | Current node | BF | Imbalanced? | Violation | Rotation applied |
 |---|---|---|---|---|---|
-| 1 | 60 | 0 | No | None | Unchanged; not on the rebalancing path |
-| 2 | 40 (if needed) | 0 | No | None | 40 remains the root |
+| 1 | (after replacing 30 with 40) | +2 at 40 | Yes | LL | Right at 40 |
+| 2 | (if needed, continue up) | 0 at 50 | No | None | None |
 
-The successor is 30, so it replaces 20 and takes 10 as its left child. The actual rebalancing path starts at 30, then goes to 40; the supplied row for 60 is not part of that path. BF(30) = 0 - (-1) = 1, and BF(40) = 1 - 1 = 0. Neither node needs a rotation.
+The successor is 40. It replaces 30 and takes 20 as its left child, with 10 still below 20. Since 40 was the immediate right child of 30, start rebalancing at 40. BF(40) = 1 - (-1) = 2, and its left child 20 has BF=1. Rotate right at 40, making 20 the left child of 50, with children 10 and 40. Continue to 50: BF(50) = 1 - 1 = 0, so no further rotation is needed.
 
 ```text
-        40
+        50
        /  \
-      30   60
-     /     / \
-    10    50 70
+      20   70
+     / \    \
+    10 40    80
 ```
 
-In-order traversal: `[10, 30, 40, 50, 60, 70]`.
+In-order traversal: `[10, 20, 40, 50, 70, 80]`.
 
 ---
 
