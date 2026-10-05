@@ -288,9 +288,9 @@ measuring the number of rotations triggered by each operation.
 2. What property of rotations ensures that insertion stops after one fix?
 3. Does a deletion ever need to rebalance higher than the root? Explain.
 
-1. After deletion, a rotation can leave the subtree shorter than it was before deletion, so another ancestor may become unbalanced. Insertion needs at most one rebalancing fix: one single rotation or one double rotation (two single rotations).
-2. The insertion fix restores the subtree's height to what it was before insertion while preserving BST order. Higher ancestors therefore do not need another fix.
-3. No. The root has no parent. After checking and fixing the root if needed, rebalancing is finished.
+- After deletion, a rotation can leave the subtree shorter than it was before deletion, so another ancestor may become unbalanced. Insertion needs at most one rebalancing fix: one single rotation or one double rotation (two single rotations).
+- The insertion fix restores the subtree's height to what it was before insertion while preserving BST order. Higher ancestors therefore do not need another fix.
+- No. The root has no parent. After checking and fixing the root if needed, rebalancing is finished.
 
 ### 4.2 Short answer: Real-world implications
 
@@ -301,8 +301,8 @@ in an AVL tree (e.g., a priority queue or cache).
 2. If deletions become a bottleneck, what alternative data structure (from this course)
    might handle deletions more efficiently?
 
-1. Deletion has the larger worst-case rotation cost, so it can be slower. Both insertion and deletion still take O(log n) worst-case time; deletion is not necessarily slower on every input.
-2. For a priority queue, a binary heap may work better. Removing the minimum or maximum takes O(log n) time by replacing the root with the last element and sifting down, without AVL rotations. This fits removing the top-priority item; finding an arbitrary key in a heap can take O(n).
+- Deletion has the larger worst-case rotation cost, so it can be slower. Both insertion and deletion still take O(log n) worst-case time.
+- For a priority queue, a binary heap may work better. Removing the minimum or maximum takes O(log n) time by replacing the root with the last element and sifting down, without AVL rotations. This fits removing the top-priority item; finding an arbitrary key in a heap can take O(n).
 
 ---
 
