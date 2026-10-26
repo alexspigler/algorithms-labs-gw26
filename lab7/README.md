@@ -84,14 +84,13 @@ occurs. Record where $j$ stops and whether you add $s$ to the results.
 | Shift `s` | Text indices checked | Final `j` | Append `s`? |
 |---|---|---|---|
 | 1 | `1` | 0 | No |
-| 2 | TODO | TODO | TODO |
-| 4 | TODO | TODO | TODO |
-| 5 | TODO | TODO | TODO |
+| 2 | `2, 3` | 1 | No |
+| 4 | `4, 5` | 1 | No |
+| 5 | `5, 6, 7` | 3 | Yes |
 
 ### 1.2 Implementation
 
-**TODO 1.2:** Complete `naive_search` in the provided `string_search.py` using
-the pseudocode. Return the list of all matching shifts, including overlaps.
+**TODO 1.2:** Complete `naive_search` in the provided `string_search.py` using the pseudocode. Return the list of all matching shifts, including overlaps.
 
 ---
 
@@ -178,6 +177,9 @@ At shift `6`, the hash is `7`; all five characters match, so record `6`.
    text and pattern indices checked before stopping. Is this a match or a
    spurious hit?
 
+1. The digit `3` leaves and `2` enters: $t_7 = (10(7 - 3\cdot 3) + 2) \bmod 13 = -18 \bmod 13 = 8$.
+2. Compare `T[12] = '6'` with `P[0] = '3'` and stop: a spurious hit.
+
 ### 2.2 Implementation
 
 **TODO 2.2:** Complete `rabin_karp` in the provided `string_search.py` using
@@ -203,11 +205,15 @@ hash comparisons and character checks.
 
 | Case | Build hashes | Search | Total |
 |---|---|---|---|
-| Best | TODO | TODO | TODO |
-| Worst | TODO | TODO | TODO |
+| Best | $\Theta(m)$ | $\Theta(n-m+1)$ | $\Theta(n+m)$ |
+| Worst | $\Theta(m)$ | $\Theta((n-m+1)m)$ | $\Theta((n-m+1)m)$ |
 
 For each case, explain in one sentence how many windows need character checks
 and how many characters are checked in each one.
+
+Best: No window needs character checks, so each has zero character comparisons.
+
+Worst: All $n-m+1$ windows need character checks, with $m$ characters checked in each.
 
 ### Connection: Searching for several patterns
 
@@ -301,11 +307,13 @@ The first row is worked: `P[2] == P[4]`, so `k` increases to `3`.
 | Index `j` | Starting `k` | Fallbacks | `pi[j]` |
 |---|---|---|---|
 | 4 | 2 | none | 3 |
-| 5 | 3 | TODO | TODO |
-| 6 | 0 | TODO | TODO |
+| 5 | 3 | `3 -> 1 -> 0` | 0 |
+| 6 | 0 | none | 1 |
 
 Now trace the matcher at `i = 8`, starting with `q = 6`. Which pattern index
 is compared with `T[8]`? What shift is recorded, and what is `q` afterward?
+
+Compare `P[6]` with `T[8]` (both `a`), record shift `2`, then set `q = pi[6] = 1`.
 
 ### 3.2 Implementation
 
@@ -330,12 +338,14 @@ Give tight bounds in terms of $n$ and $m$.
 
 | Case | Build `pi` | Search | Total |
 |---|---|---|---|
-| Best | TODO | TODO | TODO |
-| Worst | TODO | TODO | TODO |
+| Best | $\Theta(m)$ | $\Theta(n)$ | $\Theta(n+m)$ |
+| Worst | $\Theta(m)$ | $\Theta(n)$ | $\Theta(n+m)$ |
 
 Explain the worst-case bound in a few lines. Across the whole scan, how often
 can `q` increase? How does that limit the number of fallbacks? Use the same
 reasoning for `k` when building `pi`.
+
+`q` increases at most once per text character, at most $n$ times. Each fallback strictly decreases `q`, which stays nonnegative, so there are at most $n$ fallbacks and $\Theta(n)$ search time. Similarly, `k` increases at most $m-1$ times, so at most $m-1$ fallbacks occur when building `pi`, giving $\Theta(m)$ preprocessing.
 
 ---
 
