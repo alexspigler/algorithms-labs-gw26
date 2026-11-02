@@ -316,3 +316,131 @@ Is this array a valid Max-Heap? (Yes/No):     [ Yes ]
 ### Task 4.2: Array Tree Practice Code
 
 Done in `array_tree_practice.py`.
+
+---
+
+# Updated Lab 2 Instructions
+
+## Part 1: Sorting trace additions
+
+### 1.1 Guaranteed sorted suffixes
+
+The comparison-by-comparison Bubble Sort trace is in Task 1.1 above. The guaranteed sorted suffix after each pass is:
+
+| Pass | Guaranteed sorted suffix |
+|---|---|
+| 1 | `[9]` |
+| 2 | `[6, 9]` |
+| 3 | `[5, 6, 9]` |
+| 4 | `[5, 5, 6, 9]` |
+
+There are 14 comparisons and 6 swaps. Pass 4 makes no swaps, so the entire array is sorted and the early-exit check stops the algorithm.
+
+### 1.3A Sorted-input running time
+
+On sorted input, Bubble Sort makes one pass with `n - 1` comparisons and no swaps, then exits. Insertion Sort makes one failed element comparison per iteration and no shifts. Both take O(n) time.
+
+Without Bubble Sort's early-exit check, it performs every pass even on sorted input: `(n - 1) + (n - 2) + ... + 1 = n(n - 1)/2` comparisons. Its best-case time becomes Θ(n²).
+
+### 1.3B Stability
+
+Strict `>` comparisons leave equal-key items in their original order. Bubble Sort does not swap equal neighbors. Insertion Sort stops shifting when it reaches an equal value and places the saved key after it.
+
+Using `>=` in Bubble Sort still produces sorted numeric values, but it is not stable: `[5A, 5B]` becomes `[5B, 5A]` after the equal neighbors swap.
+
+## Part 2: Lomuto additions
+
+### 2.2 Implementation
+
+Implemented `lomuto_partition` in `quicksort_practice.py`.
+
+### 2.3A Pivot scanning and final swap
+
+The pivot stays at `arr[high]` while the scanning loop partitions the other elements. After the loop, `low` through `i` contains values at most the pivot, and `i + 1` through `high - 1` contains values greater than it. The final swap puts the pivot at `i + 1`, between those regions, so that position can be excluded from later recursive calls.
+
+### 2.3B Duplicate and ascending inputs
+
+For `[5, 5, 5, 5, 5]`, every scanned value is at most the pivot. The final `i` is `3`, the returned pivot index is `4`, and the left and right subproblem sizes are `4` and `0`.
+
+Repeating this split removes only one element per level. The partition comparisons add up to `(n - 1) + (n - 2) + ... + 1`, giving Θ(n²) time.
+
+Ascending, distinct values produce the same subproblem sizes, `n - 1` and `0`, because the last-element pivot is always the largest remaining value.
+
+## Part 3: Merge Sort
+
+### 3.1A Splitting and merging
+
+| Stage | Lists |
+|---|---|
+| Start | `[7, 2, 6, 3]` |
+| Split into halves | `[7, 2]` and `[6, 3]` |
+| Split into single elements | `[7]`, `[2]`, `[6]`, `[3]` |
+| Merge each pair | `[2, 7]` and `[3, 6]` |
+| Final merge | `[2, 3, 6, 7]` |
+
+### 3.1B Merge trace
+
+Merge `[2, 5, 8]` and `[1, 5, 9]`. The indices below are their values before each comparison.
+
+| `i` | `j` | Values compared | Take from | Result so far |
+|---|---|---|---|---|
+| 0 | 0 | 2 and 1 | Right | `[1]` |
+| 0 | 1 | 2 and 5 | Left | `[1, 2]` |
+| 1 | 1 | 5 and 5 | Left | `[1, 2, 5]` |
+| 2 | 1 | 8 and 5 | Right | `[1, 2, 5, 5]` |
+| 2 | 2 | 8 and 9 | Left | `[1, 2, 5, 5, 8]` |
+
+The left list is exhausted with `i = 3` and `j = 2`. Append the remaining `9` from the right list. The final result is `[1, 2, 5, 5, 8, 9]`.
+
+### 3.2 Implementation
+
+Implemented `merge` in `mergesort_practice.py`.
+
+### 3.2A Remaining elements
+
+The comparison loop stops as soon as either input is exhausted, even if the other input still has elements. Those remaining elements are already sorted and belong after the selected values, so they must be copied into the result. Returning immediately would lose them, such as the final `9` in the trace above.
+
+## Part 4: Min-heaps and Heapsort
+
+### 4.1 Array representation
+
+For `[4, 10, 8, 30, 15, 20, 16]`:
+
+| Requested relationship | Index calculation | Index | Value |
+|---|---|---|---|
+| Left child of index 1 | `2 * 1 + 1` | 3 | 30 |
+| Right child of index 1 | `2 * 1 + 2` | 4 | 15 |
+| Parent of index 6 | `(6 - 1) // 2` | 2 | 8 |
+
+The leaf indices are `3`, `4`, `5`, and `6`, since none has a child index below `7`.
+
+This is a min-heap: `4 <= 10`, `4 <= 8`, `10 <= 30`, `10 <= 15`, `8 <= 20`, and `8 <= 16`. Every parent is at most as large as each of its children.
+
+### 4.2A Sift-down trace
+
+Start with `[25, 10, 8, 30, 15, 20, 16]`, `i = 0`, and `heap_size = 7`.
+
+| Step | Current `i` | Smaller child | Action | Array afterward |
+|---|---|---|---|---|
+| 1 | 0 | Index 2, value 8 | Swap indices 0 and 2 | `[8, 10, 25, 30, 15, 20, 16]` |
+| 2 | 2 | Index 6, value 16 | Swap indices 2 and 6 | `[8, 10, 16, 30, 15, 20, 25]` |
+| 3 | 6 | None | Stop | `[8, 10, 16, 30, 15, 20, 25]` |
+
+We choose the smaller child because moving the larger child up would leave it greater than its smaller sibling, violating the min-heap property. The process stops at index `6` because its child indices, `13` and `14`, are outside the active heap.
+
+### 4.2B and 4.3A Implementations
+
+Implemented `min_heapify_down` and the extraction loop of `heap_sort` in `heapsort_practice.py`.
+
+### 4.3B One Heapsort extraction
+
+Start with `[4, 10, 8, 30, 15, 20, 16]`.
+
+| Step | Full array | Active heap size | Sorted suffix |
+|---|---|---|---|
+| Swap root with index 6 | `[16, 10, 8, 30, 15, 20, 4]` | 6 | `[4]` |
+| Sift down: swap indices 0 and 2 | `[8, 10, 16, 30, 15, 20, 4]` | 6 | `[4]` |
+
+At index `2`, the only active child is index `5`, with value `20`. Since `16 <= 20`, sift-down stops. The final active heap is `[8, 10, 16, 30, 15, 20]`, with sorted suffix `[4]`.
+
+The suffix must be excluded because its values are already in their final positions. Including the `4` in sift-down could move that minimum back into the active heap and undo the extraction.
