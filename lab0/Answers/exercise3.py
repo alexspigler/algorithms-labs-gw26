@@ -5,9 +5,12 @@ def make_blanks(n):
 def factorial(n, level):
     print(f"{make_blanks(level)}Level {level}: n={n}")
     if n == 0:
+        print(f"{make_blanks(level)}Level {level}: result=1")
         return 1
 
-    return n * factorial(n - 1, level + 1)
+    result = n * factorial(n - 1, level + 1)
+    print(f"{make_blanks(level)}Level {level}: result={result}")
+    return result
 
 
 print(f"3! = {factorial(3, 0)}")

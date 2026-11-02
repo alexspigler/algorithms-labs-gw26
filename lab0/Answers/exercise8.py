@@ -10,7 +10,7 @@ def count_paths(num_rows, num_cols):
     return down_count + right_count
 
 
-for r, c in [(2,2)]:
+for r, c in [(2,2), (5,3)]:
     n = count_paths(r, c)
     print(f"r={r} c={c} => n={n}")
 
