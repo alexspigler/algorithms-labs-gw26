@@ -100,3 +100,52 @@ A: fibonacci(40) = 102334155, calculating this took 7.1348e+00 seconds.
 
 ---
 
+# How many function calls?
+
+1. How many function calls does fibonacci(1) take?
+A: 1 call.
+
+2. How many function calls does fibonacci(5) take?
+A: 15 calls.
+
+3. How many function calls does fibonacci(10) take?
+A: 177 calls.
+
+4. Why is it so slow? Where does the complexity come from?
+A: The two recursive branches repeatedly calculate the same Fibonacci values. The number of calls grows exponentially because those branches do not share their results.
+
+5. Is this O(n)? is this O(2^n)? Why?
+A: It is not $O(n)$. It is $O(2^n)$ because each call creates at most two recursive calls, and the recursion has at most $n$ levels. The total number of calls is bounded by $1 + 2 + \cdots + 2^n = O(2^n)$.
+
+6. Is this Ω(n)? Why?
+A: Yes. One chain of recursive calls goes from $n$ down to $1$, so there are at least $n$ calls. An exponential running time can also have a linear lower bound.
+
+---
+
+# Memoization Optimization
+
+1. How is this one different from the previous one?
+A: It stores calculated Fibonacci values in a cache. If a later call needs the same value, it returns the cached result instead of calculating it again.
+
+2. How much time does it take to calculate fibonacci(30)?
+A: fibonacci(30) = 832040. One measured run on this computer took 4.3341e-06 seconds, starting with an empty cache.
+
+3. Why is it often faster?
+A: Each distinct non-base Fibonacci value is calculated once. Later calls reuse the saved result, avoiding the repeated recursive work of the basic implementation.
+
+4. Also modify this file to count: how many times the function had to be called for fibonacci(30)?
+A: 59 calls, including calls that return a base-case value or a cached result.
+
+5. Is this O(n)? is this O(2^n)? Why?
+A: With an empty cache, it performs $O(n)$ calls and constant work per call under the usual arithmetic cost model.
+
+6. Is this Ω(n)? is this Ω(2^n)? Why?
+A: It is $\Omega(n)$ because it must calculate all the Fibonacci values from $2$ through $n$ when the cache starts empty. It is not $\Omega(2^n)$ because its running time is $\Theta(n)$, which grows more slowly than $2^n$.
+
+---
+
+# Extension: Staircase Problem
+
+The implementation keeps the previous three values and adds them to calculate the next one. It uses $O(n)$ time and $O(1)$ extra space under the usual arithmetic cost model.
+
+fibonacci_threeway(50) = 4045078385041. One measured run took 1.5418e-06 seconds, below the one-second requirement.
