@@ -89,11 +89,13 @@ order, are `[0, 1, 1, 2, 1]`. Visit neighbors in the order shown.
 | Vertex removed | Queue afterward | In-degree of `D` |
 |---|---|---|
 | A | `[B, C]` | 2 |
-| B | TODO | TODO |
-| C | TODO | TODO |
+| B | `[C]` | 1 |
+| C | `[D]` | 0 |
 
 Now add the edge `E -> B`. Which vertices reach the output before the
 algorithm stops? What does the function return?
+
+`A` and `C` reach the output, in that order. The function returns `None`.
 
 ### 1.2 Implementation
 
@@ -131,6 +133,10 @@ processed before that vertex, so one pass over the edges is enough.
 **TODO 1.3:** Give the time and extra-space bounds for Kahn's algorithm in
 terms of `V` vertices and `E` edges, excluding storage for the input graph.
 Briefly explain how often each vertex enters the queue and each edge is checked.
+
+Time is `O(V + E)` and extra space is `O(V)` for the in-degrees, queue, and
+output. Each vertex enters the queue at most once. Each edge is checked
+once to count in-degrees and at most once when processing its source.
 
 ---
 
@@ -248,12 +254,17 @@ calls, then decide whether the edge is accepted.
 
 | Edge | Roots | Accept? | Total weight |
 |---|---|---|---|
-| `(B, D): 4` | TODO | TODO | TODO |
-| `(A, C): 5` | TODO | TODO | TODO |
-| `(D, E): 6` | TODO | TODO | TODO |
+| `(B, D): 4` | `(A, A)` | No | 6 |
+| `(A, C): 5` | `(A, A)` | No | 6 |
+| `(D, E): 6` | `(A, E)` | Yes | 12 |
 
 After checking `(B, D)`, what is `parent[D]`? Explain why a rejected edge
 can still change the parent array. Does Kruskal examine `(C, E): 7`?
+
+`parent[D]` becomes `A` because `find(D)` compresses the path `D -> C -> A`.
+A rejected edge can still change parents because the two `find` calls happen
+before the roots are compared. Kruskal does not examine `(C, E): 7`; it stops
+after accepting four edges, completing the spanning tree.
 
 ### 2.3 Analysis
 
@@ -261,6 +272,11 @@ can still change the parent array. Does Kruskal examine `(C, E): 7`?
 including initialization and sorting. You may use the lecture's amortized
 bound of `O(α(V))` per union-find operation, where `α` grows extremely slowly.
 Which step dominates? What changes if the edges are already sorted?
+
+The total time is `O(V + E log E + E α(V))`: initialization takes `O(V)`,
+sorting takes `O(E log E)`, and the union-find operations take `O(E α(V))`.
+Sorting dominates for a connected graph. If the edges are already sorted
+and sorting is skipped, the bound becomes `O(V + E α(V))`.
 
 ---
 
