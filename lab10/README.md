@@ -117,15 +117,17 @@ using its two endpoint labels.
 
 | Vertex removed | Edge added | `key[D]` | `key[E]` |
 |---|---|---|---|
-| `B` | TODO | TODO | TODO |
-| `C` | TODO | TODO | TODO |
-| `D` | TODO | TODO | TODO |
+| `B` | `A--B` | 4 | `inf` |
+| `C` | `B--C` | 4 | 6 |
+| `D` | `B--D` | 4 | 6 |
 
 1. Which vertex becomes `C`'s parent, and what causes the change? 
 
+   `B`, because `B--C` has weight 1, less than the current key of 3 from `A--C`.
 
 2. After removing `E`, what are the tree's four edges and total weight? 
 
+   `A--B`, `B--C`, `B--D`, and `C--E`; total weight `2 + 1 + 4 + 6 = 13`.
 
 
 ### 1.2 Implementation
@@ -199,14 +201,14 @@ after each check, including checks that leave them unchanged.
 
 | Edge checked | Candidate | Distance of `v` | Parent of `v` |
 |---|---|---|---|
-| `B -> C` | TODO | TODO | TODO |
-| `C -> D` | TODO | TODO | TODO |
-| `C -> E` | TODO | TODO | TODO |
-| `D -> E` | TODO | TODO | TODO |
+| `B -> C` | `2 + 1 = 3` | 3 | `A` |
+| `C -> D` | `3 + 5 = 8` | 6 | `B` |
+| `C -> E` | `3 + 6 = 9` | 9 | `C` |
+| `D -> E` | `6 + 7 = 13` | 9 | `C` |
 
 Give the final distance array and the shortest path from `A` to `E`:
 
- **TODO**
+In `A` through `E` order: `[0, 2, 3, 6, 9]`. The shortest path is `A -> C -> E`.
 
 ### 2.2 Implementation
 
@@ -223,12 +225,18 @@ undirected graphs, including graphs with unreachable vertices.
    `C`'s parent under each algorithm? What quantity does each algorithm
    minimize? 
 
+   Prim gives `C` parent `B`, using the edge of weight 1; it minimizes the
+   total weight of a spanning tree. Dijkstra gives `C` parent `A`, since
+   `2.5 < 2 + 1`; it minimizes the path distance from the source to each vertex.
 
 2. Consider the directed edges `S -> A: 2`, `S -> B: 5`, and `B -> A: -4`.
    Starting from `S`, which distance does Dijkstra finalize too early?
    Give the actual shortest distance and explain why the negative edge
    causes a problem.
 
+   It finalizes `A` at distance 2, but the shortest distance is `5 - 4 = 1`
+   along `S -> B -> A`. The negative edge allows a later vertex to improve
+   an already finalized distance, which Dijkstra does not revisit.
 
 3. Let `V` and `E` be the numbers of vertices and edges. For the provided
    heap, building the queue takes `O(V)`, each removal or decrease takes
@@ -238,6 +246,13 @@ undirected graphs, including graphs with unreachable vertices.
    the time bound if finding the minimum instead scans an unsorted array
    of vertices?
 
+   Prim makes at most `V` removals and `E` decreases. Dijkstra also makes
+   at most `V` removals and `E` decreases. Each checks `O(E)` adjacency entries.
+   For each algorithm, initialization and heap construction cost `O(V)`,
+   giving `O(V + E + V log V + E log V) = O((V + E) log V)` time.
+   The arrays and queue use `O(V)` auxiliary space. With an unsorted array,
+   minimum scans cost `O(V^2)` and edge checks/updates cost `O(E)`, giving
+   `O(V^2 + E)` time for each algorithm.
 
 ---
 
